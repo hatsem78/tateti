@@ -102,13 +102,12 @@ def suite():
     suite.addTest(TestMatrisTestCase('test_set_tablero_isinstance_error'))
     suite.addTest(TestMatrisTestCase('test_get_ganador_maquina'))
     suite.addTest(TestMatrisTestCase('test_get_ganador_jugador'))
-    suite.addTest(TestMatrisTestCase('test_get_tablero_juego'))
     suite.addTest(TestMatrisTestCase('test_posiciones_vacio_raises_error'))
-    suite.addTest(TestMatrisTestCase('test_lista_igual'))
+    suite.addTest(TestMatrisTestCase('test_lista_igual_true'))
     suite.addTest(TestMatrisTestCase('test_lista_igual_false'))
     suite.addTest(TestMatrisTestCase('test_hacer_movimiento_salir'))
     suite.addTest(TestMatrisTestCase('test_hacer_movimiento_reanudar'))
-    suite.addTest(TestMatrisTestCase('test_get_movimiento_validos'))
+
 
     return suite
 

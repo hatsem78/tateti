@@ -78,10 +78,12 @@ class Matris(object):
         #si ingresa S sale del juego
         if str(moviminto).upper() == 'S':
             self.salir = 'S'
-            return True
+            exit(1)
         #si ingresa R Reanuda el juego
         elif str(moviminto).upper() == 'R':
+            self.salir = 'R'
             self.reanudar_juego()
+            return 'Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones
         elif str(moviminto) in self.posiciones and jugador.upper() in self.jugadores:
             self.tablero[int(moviminto)] = jugador
             self.posiciones = self.posiciones.replace(str(moviminto), '')
@@ -94,15 +96,20 @@ class Matris(object):
         self.tablero = [self.posicion_vacio] * 9
 
     def get_tablero_juego(self):
+        tablero = ''
         for line in [self.tablero[0:3], self.tablero[3:6], self.tablero[6:9]]:
-            print('-'.join(line))
+            print(''.join(line))
 
 
 class Jugadores(Matris):
 
     def __init__(self):
         super().__init__()
-        self.tipo_jugador = ['Jugador', 'Maquina']
+        self.__tipo_jugador = ['Jugador', 'Maquina']
+
+    @property
+    def tipo_jugador(self):
+        return self.__tipo_jugador
 
     def jugador(self, posicion):
         definicion = self.get_ganador()
@@ -117,9 +124,7 @@ class Jugadores(Matris):
             while flag is not True:
                 if definicion is not False:
                     self.definicion_juego(definicion)
-                print(flag)
-                print('Jugador Ingrese posición: ', self.posiciones)
-                posicion_elejida = input()
+                posicion_elejida = input(flag)
                 flag = self.hacer_movimiento(posicion_elejida, 'X')
                 self.get_tablero_juego()
                 if definicion is not False and len(self.posiciones) <= 1:
@@ -151,6 +156,7 @@ class Jugadores(Matris):
                 print(movimiento)
                 flag = self.hacer_movimiento(str(movimiento), self.jugadores[1])
                 self.get_tablero_juego()
+                definicion = self.get_ganador()
             else:
                 self.get_tablero_juego()
                 self.definicion_juego(definicion)
@@ -177,22 +183,22 @@ class Jugadores(Matris):
 
     def get_resultado_posible(self):
 
-        flag = []
+        resultado = []
 
         # verifico si puede ganar maquina
         for row in self.matris:
             result = self.posible_jugada([self.tablero[i] for i in row], self.jugadores[1])
             if result[0]:
-                flag = [self.jugadores[1], row[result[1]]]
-                return flag
+                resultado = [self.jugadores[1], row[result[1]]]
+                return resultado
 
         # verifico posible jugada de Jugador
         for row in self.matris:
             result = self.posible_jugada([self.tablero[i] for i in row], self.jugadores[0])
             if result[0]:
-                flag = [self.jugadores[0], row[result[1]]]
+                resultado = [self.jugadores[0], row[result[1]]]
 
-        return flag
+        return resultado
 
 
 def run_juego():
@@ -213,9 +219,10 @@ def run_juego():
             jugadores.jugador(posicion_elejida)
 
         elif jugadores.salir == 'R':
+            print('Se reanuda el juego')
             jugadores.reanudar_juego()
         elif jugadores.salir == 'S':
-            return True
+            exit(1)
         else:
             primer_jugador = 0
             jugadores.maguina()
