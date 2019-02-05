@@ -1,3 +1,4 @@
+import re
 from random import randint
 
 
@@ -13,7 +14,6 @@ class Matris(object):
             [0, 3, 6], [1, 4, 7], [2, 5, 8],
             [2, 4, 6], [0, 4, 8]
         ]
-        self.__salir = ''
 
     @property
     def posicion_vacio(self):
@@ -49,16 +49,6 @@ class Matris(object):
     def matris(self):
         return self.__matris
 
-    @property
-    def salir(self):
-        return self.__salir
-
-    @salir.setter
-    def salir(self, value):
-        if value is None:
-            raise ValueError
-        self.__salir = value
-
     def get_ganador(self):
 
         for row in self.matris:
@@ -75,21 +65,17 @@ class Matris(object):
 
     def hacer_movimiento(self, moviminto, jugador):
 
-        #si ingresa S sale del juego
-        if str(moviminto).upper() == 'S':
-            self.salir = 'S'
-            exit(1)
-        #si ingresa R Reanuda el juego
-        elif str(moviminto).upper() == 'R':
-            self.salir = 'R'
-            self.reanudar_juego()
-            return 'Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones
-        elif str(moviminto) in self.posiciones and jugador.upper() in self.jugadores:
+        moviminto = re.search('^[s|r]|^[0-9]{1}$', str(moviminto), flags=re.IGNORECASE)
+
+        if moviminto:
+            moviminto = moviminto.group(0)
+        else:
+            return 'Movimeinto no valido, posiciones validas ' + self.posiciones
+        if str(moviminto) in self.posiciones and jugador.upper() in self.jugadores:
             self.tablero[int(moviminto)] = jugador
             self.posiciones = self.posiciones.replace(str(moviminto), '')
             return True
-        else:
-            return 'Movimeinto no valido, posiciones validas ' + self.posiciones
+
 
     def reanudar_juego(self):
         self.posiciones = '012345678'
@@ -111,25 +97,38 @@ class Jugadores(Matris):
     def tipo_jugador(self):
         return self.__tipo_jugador
 
-    def jugador(self, posicion):
+    def jugador(self):
         definicion = self.get_ganador()
 
         if definicion is not False and len(self.posiciones) <= 1:
             self.definicion_juego(definicion)
         else:
-            flag = self.hacer_movimiento(posicion, 'X')
-            if definicion is not False and len(self.posiciones) <= 1:
-                self.get_tablero_juego()
-                self.definicion_juego(definicion)
-            while flag is not True:
+            respuesta = self.ingresar_input('')
+
+            while respuesta is False:
                 if definicion is not False:
                     self.definicion_juego(definicion)
-                posicion_elejida = input(flag)
-                flag = self.hacer_movimiento(posicion_elejida, 'X')
+
+                posicion_elejida = self.ingresar_input('Movimeinto no valido, posiciones validas ' + self.posiciones)
+
+                respuesta = self.hacer_movimiento(posicion_elejida, 'X')
                 self.get_tablero_juego()
                 if definicion is not False and len(self.posiciones) <= 1:
                     self.definicion_juego(definicion)
-            if flag is True:
+
+                    # si ingresa S sale del juego
+            if str(respuesta).upper() == 'S':
+                exit(1)
+                # si ingresa R Reanuda el juego
+            elif str(respuesta).upper() == 'R':
+                self.reanudar_juego()
+                print('Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones)
+                return 'Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones
+            if definicion is not False and len(self.posiciones) <= 1:
+                self.get_tablero_juego()
+                self.definicion_juego(definicion)
+
+            if respuesta is True:
                 self.get_tablero_juego()
 
     def maguina(self):
@@ -200,6 +199,18 @@ class Jugadores(Matris):
 
         return resultado
 
+    '''control de entrada solo números del 0-9 y
+     letras S salida R reanudar'''
+    def ingresar_input(self, msg):
+
+        print(msg)
+        valor = re.search('^[s|r]|^[0-9]{1}$', input(), flags=re.IGNORECASE)
+
+        if valor:
+            return valor.group(0)
+        else:
+            return False
+
 
 def run_juego():
     print('Para salir Y, reanudar R')
@@ -215,14 +226,7 @@ def run_juego():
 
         if primer_jugador == 0:
             primer_jugador = 1
-            posicion_elejida = input()
-            jugadores.jugador(posicion_elejida)
-
-        elif jugadores.salir == 'R':
-            print('Se reanuda el juego')
-            jugadores.reanudar_juego()
-        elif jugadores.salir == 'S':
-            exit(1)
+            jugadores.jugador()
         else:
             primer_jugador = 0
             jugadores.maguina()

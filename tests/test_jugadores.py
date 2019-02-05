@@ -13,35 +13,16 @@ class TestJugadoresTestCase(TestCase):
     def test_required_properties(self):
         self.assertTrue(hasattr(self.jugador, 'tipo_jugador'))
 
-    def test_jugador_movimiento_correcto(self):
-
-        resultado = self.jugador.jugador(1)
-        self.assertEqual(resultado, None)
-
-    def test_jugador_movimiento_incorrecto(self):
-        #primiero se envia un valor incorrecto y luego un valor correcto
-        with patch('builtins.input', return_value='1'):
-            self.jugador.jugador('v')
-        print('Success: test_jugador_movimiento_incorrecto')
-
-    def test_jugador_movimiento_salir(self):
-
-        with self.assertRaises(SystemExit) as cm:
-            self.jugador.jugador('S')
-
-        self.assertEqual(cm.exception.code, 1)
-
     def test_jugador_movimiento_reanudar(self):
-        with patch('builtins.input', return_value='1'):
-            self.jugador.jugador('R')
-        self.assertEqual(self.jugador.salir, 'R')
+        with patch('builtins.input', return_value='R'):
+            resultado = self.jugador.jugador()
+        self.assertEqual(resultado, 'Se reanuda el juego. Jugador Ingrese posición: 012345678')
 
     #busqueda jugada posible para que gane la maquina retorna falso
     def test_posible_jugada_falso_maquina(self):
        resultado = self.jugador.posible_jugada(['-', 'O', '-'], 'O')
 
        self.assertFalse(resultado[0])
-
 
     #busqueda posible para que bloque jugada del JUGADOR
     def test_posible_jugada_bloqueo_jugador(self):
@@ -55,15 +36,22 @@ class TestJugadoresTestCase(TestCase):
         self.assertTrue(resultado)
 
 
+    def test_ingresar_input_valor_valido(self):
+        with patch('builtins.input', return_value='1'):
+            resultado = self.jugador.ingresar_input('Ingresar Movimiento')
+        self.assertEqual(resultado, '1')
+
+    def test_ingresar_input_valor_invalido(self):
+        with patch('builtins.input', return_value='n'):
+            resultado = self.jugador.ingresar_input('Ingresar Movimiento')
+        self.assertFalse(resultado)
 
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(TestJugadoresTestCase('test_required_properties'))
-    suite.addTest(TestJugadoresTestCase('test_jugador_movimiento_correcto'))
-    suite.addTest(TestJugadoresTestCase('test_jugador_movimiento_incorrecto'))
-    suite.addTest(TestJugadoresTestCase('test_jugador_movimiento_salir'))
-    suite.addTest(TestJugadoresTestCase('test_jugador_movimiento_salir'))
+
+    suite.addTest(TestJugadoresTestCase('test_ingresar_input_valor_invalido'))
+    suite.addTest(TestJugadoresTestCase('test_ingresar_input_valor_valido'))
     suite.addTest(TestJugadoresTestCase('test_jugador_movimiento_reanudar'))
     suite.addTest(TestJugadoresTestCase('test_posible_jugada_falso_maquina'))
     suite.addTest(TestJugadoresTestCase('test_posible_jugada_bloqueo_jugador'))

@@ -13,7 +13,6 @@ class TestMatrisTestCase(TestCase):
         self.assertTrue(hasattr(self.matris, 'jugadores'))
         self.assertTrue(hasattr(self.matris, 'posiciones'))
         self.assertTrue(hasattr(self.matris, 'matris'))
-        self.assertTrue(hasattr(self.matris, 'salir'))
 
     def test_set_tablero(self):
         self.assertEqual(self.matris.tablero, ['-', '-', '-', '-', '-', '-', '-', '-', '-'])
@@ -79,21 +78,6 @@ class TestMatrisTestCase(TestCase):
 
         self.assertFalse(resultado)
 
-    def test_hacer_movimiento_salir(self):
-        resultado = self.matris.hacer_movimiento('S', '0')
-        self.assertTrue(resultado)
-
-    def test_hacer_movimiento_reanudar(self):
-
-        self.matris.hacer_movimiento(0, 'X')
-        self.matris.hacer_movimiento(3, '0')
-        self.matris.hacer_movimiento(2, 'X')
-
-        self.matris.hacer_movimiento('R', '0')
-
-        self.assertEqual(self.matris.tablero, ['-', '-', '-', '-', '-', '-', '-', '-', '-'])
-        self.assertEqual(self.matris.posiciones, '012345678')
-
 
 def suite():
     suite = unittest.TestSuite()
@@ -105,8 +89,7 @@ def suite():
     suite.addTest(TestMatrisTestCase('test_posiciones_vacio_raises_error'))
     suite.addTest(TestMatrisTestCase('test_lista_igual_true'))
     suite.addTest(TestMatrisTestCase('test_lista_igual_false'))
-    suite.addTest(TestMatrisTestCase('test_hacer_movimiento_salir'))
-    suite.addTest(TestMatrisTestCase('test_hacer_movimiento_reanudar'))
+
 
 
     return suite
