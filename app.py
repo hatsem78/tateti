@@ -100,19 +100,22 @@ class Jugadores(Matris):
     def jugador(self):
         definicion = self.get_ganador()
 
-        if definicion is not False and len(self.posiciones) <= 1:
+        if definicion is not False or len(self.posiciones) <= 1:
             self.definicion_juego(definicion)
         else:
             respuesta = self.ingresar_input('')
 
+            #si la respuesta es False se debe ingresar nuevamente la posición valida
             while respuesta is False:
                 if definicion is not False:
                     self.definicion_juego(definicion)
 
+
                 posicion_elejida = self.ingresar_input('Movimeinto no valido, posiciones validas ' + self.posiciones)
 
-                respuesta = self.hacer_movimiento(posicion_elejida, 'X')
-                self.get_tablero_juego()
+                if posicion_elejida is not False:
+                    respuesta = self.hacer_movimiento(posicion_elejida, 'X')
+                    self.get_tablero_juego()
                 if definicion is not False and len(self.posiciones) <= 1:
                     self.definicion_juego(definicion)
 
@@ -124,12 +127,15 @@ class Jugadores(Matris):
                 self.reanudar_juego()
                 print('Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones)
                 return 'Se reanuda el juego. Jugador Ingrese posición: ' + self.posiciones
+            else:
+                self.hacer_movimiento(respuesta, 'X')
+
             if definicion is not False and len(self.posiciones) <= 1:
                 self.get_tablero_juego()
                 self.definicion_juego(definicion)
 
-            if respuesta is True:
-                self.get_tablero_juego()
+            self.get_tablero_juego()
+            print('=-'*10)
 
     def maguina(self):
 
@@ -137,10 +143,12 @@ class Jugadores(Matris):
 
         if len(self.posiciones) >= 7:
             posicion = self.posiciones[randint(0, len(self.posiciones) - 1)]
-            flag = self.hacer_movimiento(posicion, 'O')
+            self.hacer_movimiento(posicion, 'O')
+            print(posicion)
             self.get_tablero_juego()
+            print('=-' * 10)
         elif definicion is not False and len(self.posiciones) <= 0:
-            self.get_tablero_juego()
+            print('=-' * 10)
             self.definicion_juego(definicion)
         else:
 
@@ -153,11 +161,14 @@ class Jugadores(Matris):
                     movimiento = movimiento[1]
 
                 print(movimiento)
-                flag = self.hacer_movimiento(str(movimiento), self.jugadores[1])
+
+                self.hacer_movimiento(str(movimiento), self.jugadores[1])
                 self.get_tablero_juego()
-                definicion = self.get_ganador()
+                print('=-' * 10)
+                self.get_ganador()
+
             else:
-                self.get_tablero_juego()
+                print('=-' * 10)
                 self.definicion_juego(definicion)
 
     def definicion_juego(self, definicion):
@@ -206,30 +217,39 @@ class Jugadores(Matris):
         print(msg)
         valor = re.search('^[s|r]|^[0-9]{1}$', input(), flags=re.IGNORECASE)
 
-        if valor:
+        if valor.group(0) in self.posiciones or valor.group(0).upper() in 'SR':
             return valor.group(0)
         else:
             return False
 
 
 def run_juego():
+
     print('Para salir Y, reanudar R')
+
     jugadores = Jugadores()
+
     primer_jugador = randint(0, 1)
+
     posicion_elejida = ''
+
     while True:
         definicion = jugadores.get_ganador()
 
         if definicion is not False:
             jugadores.definicion_juego(definicion)
-        print((jugadores.tipo_jugador[primer_jugador]), 'Ingrese posición: ', jugadores.posiciones)
+            primer_jugador = 1 if definicion == 'X' else 0
 
-        if primer_jugador == 0:
-            primer_jugador = 1
+
+        if primer_jugador == 1:
+            primer_jugador = 0
+            print((jugadores.tipo_jugador[primer_jugador]), 'Ingrese posición: ', jugadores.posiciones)
             jugadores.jugador()
         else:
-            primer_jugador = 0
+            primer_jugador = 1
+            print((jugadores.tipo_jugador[primer_jugador]), 'Ingrese posición: ', jugadores.posiciones)
             jugadores.maguina()
+
 
 if __name__ == '__main__':
     run_juego()

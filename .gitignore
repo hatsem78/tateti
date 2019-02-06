@@ -102,15 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
 .ida
-.idea/misc.xml
-.idea/modules.xml
-.idea/natagua.iml
-.idea/workspace.xml
-.idea/workspace.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/workspace.xml
-.idea/dataSources.local.xml
-.idea/jsLinters/eslint.xml
+
 
 __pycache__
